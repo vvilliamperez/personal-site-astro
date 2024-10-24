@@ -1,0 +1,27 @@
+---
+const { children } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>William Perez</title>
+    <link rel="stylesheet" href="/styles/main.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="navbar">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/favorites" class="nav-link">Favorites</a>
+        <a href="/work" class="nav-link">Work</a>
+      </nav>
+    </header>
+    <main class="content-wrapper">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>&copy; {new Date().getFullYear()} William Perez</p>
+    </footer>
+  </body>
+</html>

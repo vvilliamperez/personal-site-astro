@@ -1,0 +1,17 @@
+---
+import Layout from "../components/Layout.astro";
+import { getWork } from "../utils/content";
+
+const workItems = await getWork();
+---
+
+<Layout>
+  <h1>Links to My Work</h1>
+  <ul>
+    {workItems.map((work) => (
+      <li>
+        <a href={work.url} target="_blank">{work.title}</a> - {work.description}
+        </li>
+    ))}
+  </ul>
+</Layout>

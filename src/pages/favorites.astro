@@ -1,0 +1,17 @@
+---
+import Layout from "../components/Layout.astro";
+import { getFavorites } from "../utils/content";
+
+const favorites = await getFavorites();
+---
+
+<Layout>
+  <h1>My Favorite Links</h1>
+  <ul>
+    {favorites.map((favorite) => (
+      <li>
+        <a href={favorite.url} target="_blank">{favorite.title}</a> - {favorite.description}
+      </li>
+    ))}
+  </ul>
+</Layout>
