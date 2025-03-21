@@ -1,17 +1,29 @@
 ---
 import Layout from "../components/Layout.astro";
-import { getFavorites } from "../utils/content";
+import { getFavoritesByCategory } from "../utils/content";
 
-const favorites = await getFavorites();
+interface Favorite {
+  title: string;
+  url: string;
+  description: string;
+  category: string;
+}
+
+const favoritesByCategory = await getFavoritesByCategory();
 ---
 
 <Layout>
   <h1>My Favorite Links</h1>
-  <ul>
-    {favorites.map((favorite) => (
-      <li>
-        <a href={favorite.url} target="_blank">{favorite.title}</a> - {favorite.description}
-      </li>
-    ))}
-  </ul>
+  {Object.entries(favoritesByCategory).map(([category, favorites]: [string, Favorite[]]) => (
+    <section>
+      <h2>{category}</h2>
+      <ul>
+        {favorites.map((favorite: Favorite) => (
+          <li>
+            <a href={favorite.url} target="_blank">{favorite.title}</a> - {favorite.description}
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 </Layout>

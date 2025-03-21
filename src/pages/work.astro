@@ -6,12 +6,52 @@ const workItems = await getWork();
 ---
 
 <Layout>
-  <h1>Links to My Work</h1>
-  <ul>
-    {workItems.map((work) => (
-      <li>
-        <a href={work.url} target="_blank">{work.title}</a> - {work.description}
-        </li>
-    ))}
-  </ul>
+  <h1>Portfolio & Professional Work</h1>
+  <p class="intro">
+    Here you'll find links to my professional work, projects, and credentials.
+  </p>
+  <div class="work-sections">
+    <section>
+      <h2>Featured Work</h2>
+      <ul>
+        {workItems.map((work) => (
+          <li>
+            <a href={work.url} target="_blank" rel="noopener noreferrer">{work.title}</a>
+            <p class="description">{work.description}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+
+  <style>
+    .intro {
+      font-size: 1.2em;
+      color: #666;
+      margin-bottom: 2em;
+    }
+    .work-sections {
+      display: grid;
+      gap: 2em;
+    }
+    .description {
+      margin: 0.5em 0 1em;
+      color: #444;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 1.5em;
+    }
+    a {
+      font-weight: 600;
+      text-decoration: none;
+      color: #0066cc;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </Layout>

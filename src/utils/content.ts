@@ -6,7 +6,19 @@ export const getFavorites = async () => {
     return favorites.map((mod) => mod.favorite);
   };
   
-  export const getWork = async () => {
+export const getFavoritesByCategory = async () => {
+    const favorites = await getFavorites();
+    return favorites.reduce((acc, favorite) => {
+      const category = favorite.category || 'General';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(favorite);
+      return acc;
+    }, {} as Record<string, typeof favorites>);
+  };
+  
+export const getWork = async () => {
     const workModules = import.meta.glob("../content/work/*.ts");
     const workItems = await Promise.all(
       Object.values(workModules).map((module) => module())

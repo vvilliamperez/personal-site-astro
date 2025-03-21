@@ -2,10 +2,31 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "./node_modules/.bin/astro dev",
-      "name": "Development server",
+      "name": "🚀 Launch Development Server",
+      "command": "npm run dev",
       "request": "launch",
       "type": "node-terminal"
+    },
+    {
+      "name": "🔍 Debug Current File",
+      "type": "node",
+      "request": "launch",
+      "program": "${file}",
+      "skipFiles": ["<node_internals>/**"],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    },
+    {
+      "name": "🌐 Launch Chrome against localhost",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🛠️ Full Debug (Server + Chrome)",
+      "configurations": ["🚀 Launch Development Server", "🌐 Launch Chrome against localhost"]
     }
   ]
 }
