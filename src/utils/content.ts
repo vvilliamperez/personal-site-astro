@@ -23,6 +23,8 @@ export const getWork = async () => {
     const workItems = await Promise.all(
       Object.values(workModules).map((module) => module())
     );
-    return workItems.map((mod) => mod.project);
+    return workItems
+      .map((mod) => mod.project)
+      .sort((a, b) => (a.order || 999) - (b.order || 999));
   };
   
