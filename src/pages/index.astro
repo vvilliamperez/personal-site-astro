@@ -11,9 +11,20 @@ import Layout from "../components/Layout.astro";
   </div>
   <div id="cube-container"></div>
 
-  <!-- Three.js Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
     document.addEventListener("DOMContentLoaded", function() {
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
@@ -21,17 +32,64 @@ import Layout from "../components/Layout.astro";
       renderer.setSize(400, 400);
       document.getElementById("cube-container").appendChild(renderer.domElement);
 
-      const geometry = new THREE.BoxGeometry();
-      const material = new THREE.MeshBasicMaterial({ color: 0x007bff, wireframe: true });
-      const cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
+      // Add OrbitControls
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true; // Add smooth damping effect
+      controls.dampingFactor = 0.05;
+      controls.screenSpacePanning = false;
+      controls.minDistance = 3;
+      controls.maxDistance = 10;
+      controls.maxPolarAngle = Math.PI;
 
-      camera.position.z = 3;
+      // Add lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(1, 1, 1);
+      scene.add(directionalLight);
+
+      camera.position.z = 5;
+
+      let model; // Store the model reference
+      let isUserInteracting = false;
+
+      // Track user interaction
+      controls.addEventListener('start', () => {
+        isUserInteracting = true;
+      });
+      controls.addEventListener('end', () => {
+        isUserInteracting = false;
+      });
+
+      // Load the model
+      const loader = new GLTFLoader();
+      loader.load('/raccon/source/model.gltf', function(gltf) {
+        model = gltf.scene;
+        scene.add(model);
+        
+        // Center the model
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+        
+        // Scale the model if needed
+        model.scale.set(2, 2, 2);
+        
+        // Move the model up to be closer to the links
+        model.position.y += 1;
+      });
 
       function animate() {
         requestAnimationFrame(animate);
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
+        
+        // Update controls
+        controls.update();
+        
+        // Idle spin when not interacting
+        if (model && !isUserInteracting) {
+          model.rotation.y += 0.005; // Slower spin for idle animation
+        }
+        
         renderer.render(scene, camera);
       }
 
