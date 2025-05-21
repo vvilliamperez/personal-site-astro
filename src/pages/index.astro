@@ -29,16 +29,16 @@ import Layout from "../components/Layout.astro";
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
       const renderer = new THREE.WebGLRenderer({ alpha: true });
-      renderer.setSize(600, 600);
+      renderer.setSize(400, 400);
       document.getElementById("cube-container").appendChild(renderer.domElement);
 
       // Add OrbitControls
       const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
+      controls.enableDamping = true; // Add smooth damping effect
       controls.dampingFactor = 0.05;
       controls.screenSpacePanning = false;
-      controls.minDistance = 5;
-      controls.maxDistance = 15;
+      controls.minDistance = 3;
+      controls.maxDistance = 10;
       controls.maxPolarAngle = Math.PI;
 
       // Add lights
@@ -48,12 +48,10 @@ import Layout from "../components/Layout.astro";
       directionalLight.position.set(1, 1, 1);
       scene.add(directionalLight);
 
-      camera.position.z = 8;
+      camera.position.z = 5;
 
-      let model;
-      let mixer; // Animation mixer
+      let model; // Store the model reference
       let isUserInteracting = false;
-      const clock = new THREE.Clock(); // Clock for animation timing
 
       // Track user interaction
       controls.addEventListener('start', () => {
@@ -65,31 +63,23 @@ import Layout from "../components/Layout.astro";
 
       // Load the model
       const loader = new GLTFLoader();
-      loader.load('/isomatrix_glitch/scene.gltf', function(gltf) {
+      loader.load('/raccon/source/model.gltf', function(gltf) {
         model = gltf.scene;
         scene.add(model);
-        
-        // Set up animation mixer
-        mixer = new THREE.AnimationMixer(model);
-        
-        // Play all animations
-        if (gltf.animations && gltf.animations.length) {
-          gltf.animations.forEach((clip) => {
-            const action = mixer.clipAction(clip);
-            action.play();
-          });
-        }
         
         // Center the model
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         model.position.sub(center);
         
-        // Scale the model to be larger
+        // Scale the model if needed
         model.scale.set(2, 2, 2);
         
-        // Position the model
-        model.position.y = 0;
+        // Move the model up to be closer to the links
+        model.position.y += 1;
+
+        // Rotate the model to face the camera
+        model.rotation.y = Math.PI;
       });
 
       function animate() {
@@ -98,14 +88,9 @@ import Layout from "../components/Layout.astro";
         // Update controls
         controls.update();
         
-        // Update animations
-        if (mixer) {
-          mixer.update(clock.getDelta());
-        }
-        
         // Idle spin when not interacting
         if (model && !isUserInteracting) {
-          model.rotation.y += 0.005;
+          model.rotation.y += 0.005; // Slower spin for idle animation
         }
         
         renderer.render(scene, camera);
